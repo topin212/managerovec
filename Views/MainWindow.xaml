@@ -1,0 +1,306 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Window
+	x:Class="Managerovec.Views.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	Title="Managerovec.Views"
+	Background="#FFEDEAEA"
+	Height="512"
+	ResizeMode="CanResize"
+	Width="703"
+	MinWidth="600"
+	MinHeight="500" xmlns:VM="clr-namespace:Managerovec.ViewModels"
+	x:Name="mainWindow">
+	<Window.DataContext>
+		<VM:MainWindowViewModel></VM:MainWindowViewModel>
+	</Window.DataContext>
+	<Grid>
+		<Menu
+			Height="20"
+			Width="758"
+			HorizontalAlignment="Left"
+			VerticalAlignment="Top"
+			Margin="0,0,0,0"
+			Background="#FFEDEAEA"
+			Grid.ColumnSpan="3">
+			<MenuItem
+				Header="File">
+				<MenuItem
+					Header="Create new"></MenuItem>
+				<MenuItem
+					Header="Open selected"></MenuItem>
+				<MenuItem
+					Header="Save tags"
+					x:Name="saveTags"></MenuItem>
+				<MenuItem
+					Header="Edit tags"></MenuItem>
+				<MenuItem
+					Header="Show most popular files"></MenuItem>
+			</MenuItem>
+			<MenuItem
+				Header="Search">
+				<MenuItem
+					Header="Search by tag"></MenuItem>
+				<MenuItem
+					Header="Search by name"></MenuItem>
+				<MenuItem
+					Header="Search by date"></MenuItem>
+				<MenuItem
+					Header="Open Search dialog"></MenuItem>
+			</MenuItem>
+			<MenuItem
+				Header="Drives">
+				<MenuItem
+					Header="Select default drive"></MenuItem>
+				<MenuItem
+					Header="Drive diagram"></MenuItem>
+			</MenuItem>
+			<MenuItem
+				Header="About">
+				<MenuItem
+					Header="Version"></MenuItem>
+				<MenuItem
+					Header="Exti"></MenuItem>
+			</MenuItem>
+		</Menu>
+		<Label
+			Content="Path"
+			FontWeight="Medium"
+			VerticalContentAlignment="Stretch"
+			FontSize="14"
+			HorizontalContentAlignment="Center"
+			Height="33.000000000000014"
+			Grid.Column="0"
+			Grid.Row="1"
+			HorizontalAlignment="Stretch"
+			VerticalAlignment="Top"
+			Margin="5,0,2,0" />
+		<TextBox
+			Height="23.000000000000014"
+			Grid.Row="1"
+			HorizontalAlignment="Stretch"
+			VerticalAlignment="Top"
+			Margin="8.16871609953729,2.49999999999999,8.83128390046272,0"
+			Grid.Column="1"
+			x:Name="currentPathTextBox"
+			Text="{Binding currentPath}" />
+		<ListView
+			HorizontalContentAlignment="Center"
+			Margin="5,2,8.83128390046272,8"
+			VerticalAlignment="Stretch"
+			HorizontalAlignment="Stretch"
+			Grid.RowSpan="2"
+			Grid.Row="2"
+			Grid.ColumnSpan="2"
+			Grid.Column="0"
+			x:Name="filesListView"
+			ItemsSource="{Binding files}"
+			SelectionChanged="filesListViewSelectionChanged">
+			<ListView.View>
+				<GridView>
+					<GridView.Columns>
+						<GridViewColumn
+							Width="100"
+							Header="Name"
+							DisplayMemberBinding="{Binding filename}"></GridViewColumn>
+						<GridViewColumn
+							Width="150"
+							Header="Extension"
+							DisplayMemberBinding="{Binding extension}"></GridViewColumn>
+						<GridViewColumn
+							Width="126"
+							Header="Tags"
+							DisplayMemberBinding="{Binding tagsConcatted}"></GridViewColumn>
+						<GridViewColumn
+							Width="126"
+							Header="FS Attributes"
+							DisplayMemberBinding="{Binding systemAttributes}"></GridViewColumn>
+						<GridViewColumn
+							Width="126"
+							Header="Created at"
+							DisplayMemberBinding="{Binding createdAt}"></GridViewColumn>
+					</GridView.Columns>
+				</GridView>
+			</ListView.View>
+		</ListView>
+		<Grid
+			Background="#FFFFFFFF"
+			Grid.Row="1"
+			Grid.RowSpan="2"
+			HorizontalAlignment="Stretch"
+			VerticalAlignment="Stretch"
+			Margin="6.16871609953728,3,7,12"
+			Grid.Column="2">
+			<Grid.RowDefinitions>
+				<RowDefinition
+					Height="0.110904626450334*" />
+				<RowDefinition
+					Height="0.583940900228489*" />
+				<RowDefinition
+					Height="0.154433580711426*" />
+				<RowDefinition
+					Height="0.151979060370083*" />
+			</Grid.RowDefinitions>
+			<Label
+				Content="Selected:"
+				Width="58"
+				Height="24"
+				Grid.Column="0"
+				Grid.Row="0"
+				HorizontalAlignment="Left"
+				Margin="0,0,0,0"
+				VerticalAlignment="Center" />
+			<Label
+				Height="24"
+				Grid.Column="0"
+				Grid.Row="0"
+				Content="{Binding selectedFileName, Mode=TwoWay}"
+				VerticalAlignment="Center"
+				Margin="71,0,5,0"
+				x:Name="selectedFileNameLabel" />
+			<Line
+				Stroke="#FF000000"
+				StrokeThickness="4"
+				ClipToBounds="True"
+				VerticalAlignment="Top"
+				Grid.Row="1"
+				Grid.Column="0"
+				Y2="0"
+				Y1="0"
+				X1="0"
+				X2="360"
+				Margin="0,1,0,0"
+				Stretch="UniformToFill" />
+			<ListBox
+				Grid.Column="0"
+				Grid.Row="1"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch"
+				Margin="5.99999999999999,7,10,0"
+				x:Name="tagListBox"
+				ItemsSource="{Binding selectedTags, Mode=TwoWay}" />
+			<StackPanel
+				Orientation="Horizontal"
+				Height="23"
+				Grid.Column="0"
+				Grid.Row="2"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Center"
+				Margin="1,0,5,0">
+				<Button
+					Height="23"
+					Content="Add this tag: "
+					Width="82"
+					Margin="5,0,0,0"
+					x:Name="addTagButton"
+					Command="{Binding addTagCommand}"
+					CommandParameter="{Binding ElementName=newTagNameTextBox, Path=Text, Mode=OneWay}" />
+				<TextBox
+					Height="20"
+					VerticalAlignment="Center"
+					Width="202"
+					Margin="3,0,0,0"
+					BorderThickness="1,1,1,1"
+					x:Name="newTagNameTextBox" />
+			</StackPanel>
+			<StackPanel
+				Orientation="Horizontal"
+				Height="32"
+				Grid.Column="0"
+				Grid.Row="3"
+				HorizontalAlignment="Stretch"
+				Margin="0.999999999999886,0,5.00000000000011,6"
+				VerticalAlignment="Center">
+				<Button
+					Content="Remove Selected Tag"
+					Height="23"
+					Width="131"
+					BorderThickness="1,1,1,1"
+					Margin="5,0,0,0"
+					HorizontalContentAlignment="Center"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					x:Name="removeTagButton" />
+			</StackPanel>
+		</Grid>
+		<Grid
+			HorizontalAlignment="Stretch"
+			VerticalAlignment="Stretch"
+			Margin="6.16871609953733,11,9,5"
+			Grid.Row="3"
+			Grid.Column="2">
+			<Grid.RowDefinitions>
+				<RowDefinition
+					Height="0.775727159409043*" />
+				<RowDefinition
+					Height="0.224272840590957*" />
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition
+					Width="0.113734568713941*" />
+				<ColumnDefinition
+					Width="0.88634338631933*" />
+			</Grid.ColumnDefinitions>
+			<ListView
+				VerticalContentAlignment="Top"
+				HorizontalContentAlignment="Left"
+				Grid.Column="0"
+				Grid.ColumnSpan="2"
+				Grid.Row="0"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch"
+				x:Name="cliOutputListView"
+				ItemsSource="{Binding cliCommandHistory, Mode=TwoWay}"
+				Margin="4,8,4,11">
+				<ListView.View>
+					<GridView>
+						<GridView.Columns>
+							<GridViewColumn
+								Width="100"
+								Header="command"
+								DisplayMemberBinding="{Binding command}"></GridViewColumn>
+							<GridViewColumn
+								Width="200"
+								Header="output"
+								DisplayMemberBinding="{Binding response}"></GridViewColumn>
+						</GridView.Columns>
+					</GridView>
+				</ListView.View>
+			</ListView>
+			<Label
+				Content="&gt;&gt;"
+				Width="24"
+				Height="23"
+				Grid.Column="0"
+				Grid.Row="1"
+				HorizontalAlignment="Left"
+				VerticalAlignment="Bottom"
+				Margin="7.99999999999997,0,0,8.5" />
+			<TextBox
+				Height="20"
+				Grid.Column="1"
+				Grid.Row="1"
+				HorizontalAlignment="Stretch"
+				Margin="3,5,5,0"
+				VerticalAlignment="Center"
+				x:Name="cliInputTextBlock"
+				KeyDown="cliInpuTextBoxEventToCommandTransferer" />
+		</Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition
+				Width="0.0855046423625837*" />
+			<ColumnDefinition
+				Width="0.461112169589308*" />
+			<ColumnDefinition
+				Width="0.453093744611308*" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition
+				Height="0.0434948546963899*" />
+			<RowDefinition
+				Height="0.0573879588090021*" />
+			<RowDefinition
+				Height="0.544203448572964*" />
+			<RowDefinition
+				Height="0.354942604951834*" />
+		</Grid.RowDefinitions>
+	</Grid>
+</Window>

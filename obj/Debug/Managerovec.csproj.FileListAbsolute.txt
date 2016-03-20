@@ -1,0 +1,15 @@
+E:\ItStepDz\CSharp\examWork\Managerovec\Managerovec\bin\Debug\Managerovec.exe.config
+E:\ItStepDz\CSharp\examWork\Managerovec\Managerovec\bin\Debug\Managerovec.exe
+E:\ItStepDz\CSharp\examWork\Managerovec\Managerovec\bin\Debug\Managerovec.pdb
+E:\ItStepDz\CSharp\examWork\Managerovec\Managerovec\obj\Debug\Managerovec.csprojResolveAssemblyReference.cache
+E:\ItStepDz\CSharp\examWork\Managerovec\Managerovec\obj\Debug\App.g.cs
+E:\ItStepDz\CSharp\examWork\Managerovec\Managerovec\obj\Debug\Managerovec_MarkupCompile.cache
+E:\ItStepDz\CSharp\examWork\Managerovec\Managerovec\obj\Debug\Managerovec.g.resources
+E:\ItStepDz\CSharp\examWork\Managerovec\Managerovec\obj\Debug\Managerovec.exe
+E:\ItStepDz\CSharp\examWork\Managerovec\Managerovec\obj\Debug\Managerovec.pdb
+E:\ItStepDz\CSharp\examWork\Managerovec\Managerovec\obj\Debug\Views\loginWindow.baml
+E:\ItStepDz\CSharp\examWork\Managerovec\Managerovec\obj\Debug\Views\loginWindow.g.cs
+E:\ItStepDz\CSharp\examWork\Managerovec\Managerovec\obj\Debug\GeneratedInternalTypeHelper.g.cs
+E:\ItStepDz\CSharp\examWork\Managerovec\Managerovec\obj\Debug\Managerovec_MarkupCompile.lref
+E:\ItStepDz\CSharp\examWork\Managerovec\Managerovec\obj\Debug\Views\MainWindow.baml
+E:\ItStepDz\CSharp\examWork\Managerovec\Managerovec\obj\Debug\Views\MainWindow.g.cs
