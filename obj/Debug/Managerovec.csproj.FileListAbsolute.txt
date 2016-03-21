@@ -13,3 +13,5 @@ E:\ItStepDz\CSharp\examWork\Managerovec\Managerovec\obj\Debug\GeneratedInternalT
 E:\ItStepDz\CSharp\examWork\Managerovec\Managerovec\obj\Debug\Managerovec_MarkupCompile.lref
 E:\ItStepDz\CSharp\examWork\Managerovec\Managerovec\obj\Debug\Views\MainWindow.baml
 E:\ItStepDz\CSharp\examWork\Managerovec\Managerovec\obj\Debug\Views\MainWindow.g.cs
+E:\ItStepDz\CSharp\examWork\Managerovec\Managerovec\obj\Debug\Views\SearchModalDialog.baml
+E:\ItStepDz\CSharp\examWork\Managerovec\Managerovec\obj\Debug\Views\SearchModalDialog.g.cs

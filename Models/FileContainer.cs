@@ -15,6 +15,7 @@ namespace Managerovec.Models
 	/// Obviously, this is a container, that descripts a file, with tags, attributes and it's 
 	/// filePath.
 	/// </summary>
+	[Serializable]
 	public class FileContainer
 	{
 		public string filename{get;set;}
@@ -26,6 +27,9 @@ namespace Managerovec.Models
 		public string tagsConcatted{get;set;}
 		public DateTime createdAt { get; set; }
 
+		public FileContainer()
+		{
+		}
 		public FileContainer(string filename)
 		{
 			if (filename == null)
@@ -70,7 +74,7 @@ namespace Managerovec.Models
 			this.tags = tags;
 			this.extension = extension;
 			this.systemAttributes = systemAttributes;
-			
+			this.tagsConcatted = String.Join(" ", tags);
 		}
 		public FileContainer(string filename, string extension, string systemAttributes, DateTime createdAt)
 		{
@@ -83,7 +87,7 @@ namespace Managerovec.Models
 			this.filename = filename;
 			this.extension = extension;
 			this.systemAttributes = systemAttributes;
-			this.createdAt = createdAt;			
+			this.createdAt = createdAt;
 		}
 		public FileContainer(string filename, string fullName, string extension, string systemAttributes, DateTime createdAt)
 		{
@@ -100,7 +104,6 @@ namespace Managerovec.Models
 			this.extension = extension;
 			this.systemAttributes = systemAttributes;
 			this.createdAt = createdAt;
-			
 		}
 		
 		public List<string> addTag(string tagName){
@@ -111,5 +114,63 @@ namespace Managerovec.Models
 			tags.Remove(tagname);
 			return tags;
 		}
+		
+		public string joinedTags {
+			get { return this.tagsConcatted = String.Join(" ", tags); }
+		}
+		
+		//thanks SharpDevelop for this:
+		#region Equals and GetHashCode implementation
+		public override bool Equals(object obj)
+		{
+			FileContainer other = obj as FileContainer;
+				if (other == null)
+					return false;
+						return this.filename == other.filename && 
+							this.fullName == other.fullName && 
+							object.Equals(this.tags, other.tags) && 
+							this.extension == other.extension && 
+							this.systemAttributes == other.systemAttributes && 
+							this.systemAttributesConcatted == other.systemAttributesConcatted && 
+							this.tagsConcatted == other.tagsConcatted && 
+							this.createdAt == other.createdAt;
+		}
+
+		public override int GetHashCode()
+		{
+			int hashCode = 0;
+			unchecked {
+				if (filename != null)
+					hashCode += 1000000007 * filename.GetHashCode();
+				if (fullName != null)
+					hashCode += 1000000009 * fullName.GetHashCode();
+				if (tags != null)
+					hashCode += 1000000021 * tags.GetHashCode();
+				if (extension != null)
+					hashCode += 1000000033 * extension.GetHashCode();
+				if (systemAttributes != null)
+					hashCode += 1000000087 * systemAttributes.GetHashCode();
+				if (systemAttributesConcatted != null)
+					hashCode += 1000000093 * systemAttributesConcatted.GetHashCode();
+				if (tagsConcatted != null)
+					hashCode += 1000000097 * tagsConcatted.GetHashCode();
+				hashCode += 1000000103 * createdAt.GetHashCode();
+			}
+			return hashCode;
+		}
+
+		public static bool operator ==(FileContainer lhs, FileContainer rhs) {
+			if (ReferenceEquals(lhs, rhs))
+				return true;
+			if (ReferenceEquals(lhs, null) || ReferenceEquals(rhs, null))
+				return false;
+			return lhs.Equals(rhs);
+		}
+
+		public static bool operator !=(FileContainer lhs, FileContainer rhs) {
+			return !(lhs == rhs);
+		}
+
+		#endregion
 	}
 }

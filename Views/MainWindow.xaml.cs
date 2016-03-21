@@ -24,16 +24,18 @@ namespace Managerovec.Views
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		MainWindowViewModel viewModel;
 		public MainWindow()
 		{
 			InitializeComponent();
-			selectedFileNameLabel.Content = "Hello world";
+			viewModel = DataContext as MainWindowViewModel;
 		}
+		
+		#region Not mvvm-y, but I had no choice
 		//I know, I know, don't blame me, I tried to use pure wpf3, which doesn't yet have event2command bind.
 		void cliInpuTextBoxEventToCommandTransferer(object sender, KeyEventArgs e)
 		{
 			string text = (sender as TextBox).Text;
-			var viewModel = DataContext as MainWindowViewModel;
 			if(!e.Key.Equals(Key.Enter))
 				return;
 			if(viewModel.cliProcessorCommand.CanExecute(text)){
@@ -44,8 +46,32 @@ namespace Managerovec.Views
 		void filesListViewSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			Managerovec.Models.FileContainer  selected = ((sender as ListView).SelectedItem as Managerovec.Models.FileContainer);
-			var viewModel = DataContext as MainWindowViewModel;
 			viewModel.fileListViewSelectionChangedCommand.Execute(selected);
 		}
+		void onSaveClickEventTransferer(object sender, RoutedEventArgs e){
+			viewModel.saveTagsCommand.Execute(null);
+		}
+		void onLoadClickEventTransferer(object sender, RoutedEventArgs e){
+			viewModel.saveTagsCommand.Execute(null);
+		}
+		void onSearchClickEventTransferer(object sender, RoutedEventArgs e)
+		{
+			var dialogWindow = new SearchModalDialog();
+			dialogWindow.ShowDialog();
+			viewModel.searchTagCommand.Execute(dialogWindow.tag);
+		}
+		void fileListViewDoubleClickEventTransferer(object sender, MouseButtonEventArgs e)
+		{
+			try{
+				Managerovec.Models.FileContainer selectedItem = (sender as ListView).SelectedItem as Managerovec.Models.FileContainer;
+				viewModel.fileListViewDoubleClickCommand.Execute(selectedItem);
+			}catch(NullReferenceException exc){
+				MessageBox.Show(exc.Message);
+			}
+			
+		}
+		
+		
+		#endregion
 	}
 }

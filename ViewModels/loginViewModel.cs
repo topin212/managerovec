@@ -37,7 +37,7 @@ namespace Managerovec.ViewModels
 			}
 			set{
 				loginModel.login = value;
-				RaisePropertyChanged("login");
+				OnPropertyChanged("login");
 			}
 		}
 		public string password{
@@ -46,7 +46,7 @@ namespace Managerovec.ViewModels
 			}
 			set{
 				loginModel.password = value;
-				RaisePropertyChanged("password");
+				OnPropertyChanged("password");
 			}
 		}
 		public bool CanLogIn(){

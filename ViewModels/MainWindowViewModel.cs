@@ -57,21 +57,21 @@ namespace Managerovec.ViewModels
 		public string selectedFileName {
 			get { return _selectedFileName; }
 			set { _selectedFileName = value; 
-				RaisePropertyChanged("selectedFileName");}
+				OnPropertyChanged("selectedFileName");}
 		}
 		
 		string _currentPath;
 		public string currentPath {
 			get { return _currentPath; }
 			set { _currentPath = value; 
-				RaisePropertyChanged("currentPath");}
+				OnPropertyChanged("currentPath");}
 		}
 		
 		string _previousPath;
 		public string previousPath {
 			get { return _previousPath; }
 			set { _previousPath = value; 
-				RaisePropertyChanged("previousPath");}
+				OnPropertyChanged("previousPath");}
 		}
 		
 		//Some commands here:
@@ -79,20 +79,24 @@ namespace Managerovec.ViewModels
 		public RelayCommand cliProcessorCommand { get; set; }
 		public RelayCommand fileListViewSelectionChangedCommand { get; set; }
 		public RelayCommand addTagCommand { get; set; }
+		public RelayCommand removeTagCommand { get; set; }
+		public RelayCommand searchTagCommand { get; set; }
+		public RelayCommand saveTagsCommand { get; set; }
+		public RelayCommand loadTagsCommand { get; set; }
 		//I will need a public List<> property to display files.
 		//should I use list<list<file>>? Nope, I think this is a bad idea, and I will figure out a better way
 		List<FileContainer> _files;
 		public List<FileContainer> files {
 			get { return _files; }
 			set { _files = value; 
-				RaisePropertyChanged("files");}
+				OnPropertyChanged("files");}
 		}
 		
 		List<CliCommandContainer> _cliCommandHistory;
 		public List<CliCommandContainer> cliCommandHistory {
 			get { return _cliCommandHistory; }
 			set { _cliCommandHistory = value; 
-				RaisePropertyChanged("cliCommandHistory");}
+				OnPropertyChanged("cliCommandHistory");}
 		}
 		
 		//id of that selected file, which is needed later on, while saving the tags.
@@ -102,7 +106,7 @@ namespace Managerovec.ViewModels
 		public List<string> selectedTags {
 			get { return _selectedTags; }
 			set { _selectedTags = value; 
-				RaisePropertyChanged("selectedTags");}
+				OnPropertyChanged("selectedTags");}
 		}
 		//so, we have our properties, now we need to fill them up, and then bind them to 
 		//both listViews, and we can test that.
@@ -139,8 +143,18 @@ namespace Managerovec.ViewModels
 			//hehe, a small obfuscation with param=>true :)
 			cliProcessorCommand = new RelayCommand(FcliProcessorCommand, param=>true);
 			#endregion
-			#region addingTags
+			#region adding and removing tags
 			addTagCommand = new RelayCommand(addTagToFilecontainer);
+			removeTagCommand = new RelayCommand(removeTagFromFileContainer);
+			#endregion
+			#region searchin Tags
+			searchTagCommand = new RelayCommand(search);
+			saveTagsCommand = new RelayCommand(saveMyWorkPlease);
+			loadTagsCommand = new RelayCommand(loadMyWorkPlease);
+			#endregion
+			
+			#region fileListView Extra
+			fileListViewDoubleClickCommand = new RelayCommand(listViewDoubleClick);
 			#endregion
 		}
 
@@ -152,34 +166,39 @@ namespace Managerovec.ViewModels
 		/// To be clear, I take directory as a file, except for its extension is 'dir'
 		/// 
 		/// And also, here I will need to check if I already have a saved file, so
-		/// TODO check if there already is a saved tag file.
 		/// </summary>
 		void getFilesAndDirectories(){
-			DirectoryInfo currentDir = new DirectoryInfo(currentPath);
+			List<FileContainer> lst1 = new List<FileContainer>(), lst2 = new List<FileContainer>();
+			
+			if (File.Exists(Directory.GetCurrentDirectory() + @"\tags.tags")){
+				lst1 = Serializator.Load();
+			}
+			var currentDir = new DirectoryInfo(currentPath);
 			DirectoryInfo[] internalDirs = currentDir.GetDirectories();
 			FileInfo[] internalFiles = currentDir.GetFiles();
 			
 			foreach (var directory in internalDirs) {
-				_files.Add(new FileContainer(directory.Name, directory.FullName, "<dir>", directory.Attributes.ToString(), directory.CreationTime));
+				lst2.Add(new FileContainer(directory.Name, directory.FullName, "<dir>", directory.Attributes.ToString(), directory.CreationTime));
 			}
 			//now, we populated that with directories, but the files remain untouched...
 			foreach (var file in internalFiles) {
-				_files.Add(new FileContainer(file.Name, file.FullName, "<" + file.Extension + ">", file.Attributes.ToString(), file.CreationTime));
+				lst2.Add(new FileContainer(file.Name, file.FullName, "<" + file.Extension + ">", file.Attributes.ToString(), file.CreationTime));
 			}
+			;
+			var newList = lst1.Concat(lst2).ToList().Distinct();
+			_files.Clear();
+			_files.AddRange(newList);
+			OnPropertyChanged("files");
 			//populated? great. Now we need to take this, and bind it to the fileListView.
 		}
 		
 		//well, I'll handle double-clicks a bit later. 
-		void listViewDoubleClick(object obj)
-		{
-			MessageBox.Show("Hehehehe");
-		}
 		
 		//Okay, Nevermind. This doesn't work yet.
 		//So, let's pass to the selection event.
 		void FcliProcessorCommand(object obj){
 			cliCommandHistory.Add(new CliCommandContainer(obj as string, ccv2.tryCommand(obj as string)));
-			RaisePropertyChanged("cliCommandHistory");
+			OnPropertyChanged("cliCommandHistory");
 		}
 		
 		//in order to display that guy properly, I need a List<String> property somewhere above.
@@ -219,6 +238,62 @@ namespace Managerovec.ViewModels
 				files[selectedFile].tags.RemoveAt(0);
 			}
 			selectedTags = files[selectedFile].addTag(tag as string);
+			OnPropertyChanged("selectedTags");
+		}
+		
+		//OK, nevermind all that changes. Let's just hop over to removing tags and saving them.
+		/// <summary>
+		/// Removes a tag from a fileContainer
+		/// </summary>
+		/// <param name="tag">A string tag to be removed from the collection.</param>
+		void removeTagFromFileContainer(object tag){
+			//if this is the last tag, insert dummy tag
+			if(files[selectedFile].tags.Count == 1){
+				files[selectedFile].tags.Add("There are no tags yet :)");
+			}
+			selectedTags = files[selectedFile].removeTag(tag as string);
+			OnPropertyChanged("selectedTags");
+		}
+		
+		//with this last thing done, we need to save our work somehow.
+		//and then load it. Somehow.
+		void saveMyWorkPlease(object what=null){
+			//well, we have a list of all files. We can save it all.
+			//I do not care about that. For now.
+			Serializator.Save(files);
+		}
+		void loadMyWorkPlease(object what=null){
+			files = Serializator.Load();
+		}
+		//well, it saves progress, properly loads tags, that's cool. now I need searching!
+		
+		void search(object Tag){
+			List<FileContainer> found = new List<FileContainer>();
+			foreach (var file in files) {
+				if(file.tags != null){
+				foreach (var tag in file.tags) {
+					if(tag.Equals(Tag as string)){
+						found.Add(file);
+						break;
+					}
+					}
+				}
+			}
+			files = found;
+			OnPropertyChanged("files");
+		}
+		//as search with tags is done, I have no more work to do except for the usability.
+		//checking out other directories and drives would be cool.
+		//so, let's get it started right through the rpain :D
+		
+		//It's time to handle DoubleClicks!
+		void listViewDoubleClick(object obj)
+		{
+			previousPath = currentPath;
+			currentPath = (obj as FileContainer).fullName;
+			getFilesAndDirectories();
+			OnPropertyChanged("currentPath");
+			OnPropertyChanged("files");
 		}
 	}
 }

@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows;
 
 namespace Managerovec.ViewModels
 {
@@ -24,19 +25,13 @@ namespace Managerovec.ViewModels
 		//zvoroval, because the old implementation seemed to get stuck sometimes
 		#region INotifyPropertyChanged implementation
 	    public event PropertyChangedEventHandler PropertyChanged;
-	    protected virtual void RaisePropertyChanged(string propertyName)
+	    protected void OnPropertyChanged(string propertyName)
 	    {
 	        PropertyChangedEventHandler handler = PropertyChanged;
-	        if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+	        if (handler != null) 
+	        	handler(this, new PropertyChangedEventArgs(propertyName));
 	    }
-	    protected bool SetField<T>(ref T field, T value, string propertyName)
-	    {
-	        if (EqualityComparer<T>.Default.Equals(field, value)) return false;
-	        field = value;
-	        RaisePropertyChanged(propertyName);
-	        return true;
-	    }
-
+	    
 		#endregion
 	}
 }

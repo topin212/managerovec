@@ -76,6 +76,7 @@
     <Compile Include="Util\CommandLineClone.cs" />
     <Compile Include="Util\IClosable.cs" />
     <Compile Include="Util\RelayCommand.cs" />
+    <Compile Include="Util\Serializator.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\loginViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
@@ -87,10 +88,15 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Views\SearchModalDialog.xaml.cs">
+      <DependentUpon>SearchModalDialog.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Include="Views\loginWindow.xaml" />
     <Page Include="Views\MainWindow.xaml" />
+    <Page Include="Views\SearchModalDialog.xaml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

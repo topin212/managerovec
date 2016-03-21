@@ -29,22 +29,18 @@
 					Header="Open selected"></MenuItem>
 				<MenuItem
 					Header="Save tags"
-					x:Name="saveTags"></MenuItem>
-				<MenuItem
-					Header="Edit tags"></MenuItem>
-				<MenuItem
-					Header="Show most popular files"></MenuItem>
+					x:Name="saveTags"
+					Click="onSaveClickEventTransferer"></MenuItem>
 			</MenuItem>
 			<MenuItem
 				Header="Search">
 				<MenuItem
-					Header="Search by tag"></MenuItem>
+					Header="Search by tag"
+					Click="onSearchClickEventTransferer"></MenuItem>
 				<MenuItem
-					Header="Search by name"></MenuItem>
+					Header="--Search by name--"></MenuItem>
 				<MenuItem
-					Header="Search by date"></MenuItem>
-				<MenuItem
-					Header="Open Search dialog"></MenuItem>
+					Header="--Search by date--"></MenuItem>
 			</MenuItem>
 			<MenuItem
 				Header="Drives">
@@ -81,7 +77,7 @@
 			Margin="8.16871609953729,2.49999999999999,8.83128390046272,0"
 			Grid.Column="1"
 			x:Name="currentPathTextBox"
-			Text="{Binding currentPath}" />
+			Text="{Binding currentPath, UpdateSourceTrigger=PropertyChanged}" />
 		<ListView
 			HorizontalContentAlignment="Center"
 			Margin="5,2,8.83128390046272,8"
@@ -92,31 +88,32 @@
 			Grid.ColumnSpan="2"
 			Grid.Column="0"
 			x:Name="filesListView"
-			ItemsSource="{Binding files}"
-			SelectionChanged="filesListViewSelectionChanged">
+			ItemsSource="{Binding files, UpdateSourceTrigger=PropertyChanged}"
+			SelectionChanged="filesListViewSelectionChanged"
+			MouseDoubleClick="fileListViewDoubleClickEventTransferer">
 			<ListView.View>
 				<GridView>
 					<GridView.Columns>
 						<GridViewColumn
 							Width="100"
 							Header="Name"
-							DisplayMemberBinding="{Binding filename}"></GridViewColumn>
+							DisplayMemberBinding="{Binding filename, UpdateSourceTrigger=PropertyChanged }"></GridViewColumn>
 						<GridViewColumn
 							Width="150"
 							Header="Extension"
-							DisplayMemberBinding="{Binding extension}"></GridViewColumn>
+							DisplayMemberBinding="{Binding extension, UpdateSourceTrigger=PropertyChanged}"></GridViewColumn>
 						<GridViewColumn
 							Width="126"
 							Header="Tags"
-							DisplayMemberBinding="{Binding tagsConcatted}"></GridViewColumn>
+							DisplayMemberBinding="{Binding joinedTags, UpdateSourceTrigger=PropertyChanged}"></GridViewColumn>
 						<GridViewColumn
 							Width="126"
 							Header="FS Attributes"
-							DisplayMemberBinding="{Binding systemAttributes}"></GridViewColumn>
+							DisplayMemberBinding="{Binding systemAttributes, UpdateSourceTrigger=PropertyChanged}"></GridViewColumn>
 						<GridViewColumn
 							Width="126"
 							Header="Created at"
-							DisplayMemberBinding="{Binding createdAt}"></GridViewColumn>
+							DisplayMemberBinding="{Binding createdAt, UpdateSourceTrigger=PropertyChanged}"></GridViewColumn>
 					</GridView.Columns>
 				</GridView>
 			</ListView.View>
@@ -152,7 +149,7 @@
 				Height="24"
 				Grid.Column="0"
 				Grid.Row="0"
-				Content="{Binding selectedFileName, Mode=TwoWay}"
+				Content="{Binding selectedFileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 				VerticalAlignment="Center"
 				Margin="71,0,5,0"
 				x:Name="selectedFileNameLabel" />
@@ -176,7 +173,7 @@
 				VerticalAlignment="Stretch"
 				Margin="5.99999999999999,7,10,0"
 				x:Name="tagListBox"
-				ItemsSource="{Binding selectedTags, Mode=TwoWay}" />
+				ItemsSource="{Binding selectedTags, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
 			<StackPanel
 				Orientation="Horizontal"
 				Height="23"
@@ -191,7 +188,7 @@
 					Width="82"
 					Margin="5,0,0,0"
 					x:Name="addTagButton"
-					Command="{Binding addTagCommand}"
+					Command="{Binding addTagCommand }"
 					CommandParameter="{Binding ElementName=newTagNameTextBox, Path=Text, Mode=OneWay}" />
 				<TextBox
 					Height="20"
@@ -207,7 +204,7 @@
 				Grid.Column="0"
 				Grid.Row="3"
 				HorizontalAlignment="Stretch"
-				Margin="0.999999999999886,0,5.00000000000011,6"
+				Margin="1,0,5.0,6"
 				VerticalAlignment="Center">
 				<Button
 					Content="Remove Selected Tag"
@@ -218,7 +215,9 @@
 					HorizontalContentAlignment="Center"
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Stretch"
-					x:Name="removeTagButton" />
+					x:Name="removeTagButton"
+					Command="{Binding removeTagCommand }"
+					CommandParameter="{Binding ElementName=tagListBox, Path=SelectedItem, Mode=OneWay}" />
 			</StackPanel>
 		</Grid>
 		<Grid
@@ -248,7 +247,7 @@
 				HorizontalAlignment="Stretch"
 				VerticalAlignment="Stretch"
 				x:Name="cliOutputListView"
-				ItemsSource="{Binding cliCommandHistory, Mode=TwoWay}"
+				ItemsSource="{Binding cliCommandHistory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 				Margin="4,8,4,11">
 				<ListView.View>
 					<GridView>
@@ -256,11 +255,11 @@
 							<GridViewColumn
 								Width="100"
 								Header="command"
-								DisplayMemberBinding="{Binding command}"></GridViewColumn>
+								DisplayMemberBinding="{Binding command, UpdateSourceTrigger=PropertyChanged}"></GridViewColumn>
 							<GridViewColumn
 								Width="200"
 								Header="output"
-								DisplayMemberBinding="{Binding response}"></GridViewColumn>
+								DisplayMemberBinding="{Binding response, UpdateSourceTrigger=PropertyChanged}"></GridViewColumn>
 						</GridView.Columns>
 					</GridView>
 				</ListView.View>

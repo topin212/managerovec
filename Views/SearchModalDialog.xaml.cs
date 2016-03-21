@@ -1,8 +1,8 @@
 ﻿/*
  * Created by SharpDevelop.
  * User: Alex
- * Date: 19.03.2016
- * Time: 16:43
+ * Date: 03/21/2016
+ * Time: 01:57
  * 
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
@@ -15,20 +15,26 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using Managerovec.Util;
 
 namespace Managerovec.Views
 {
 	/// <summary>
-	/// Interaction logic for loginWindow.xaml
+	/// Interaction logic for SearchModalDialog.xaml
 	/// </summary>
-	public partial class loginWindow : Window, IClosable
-	{		
-		public loginWindow()
+	public partial class SearchModalDialog : Window
+	{
+		public SearchModalDialog()
 		{
 			InitializeComponent();
 		}
-		public void close(){
+		
+		public string tag{
+			get{
+				return tagtextBox.Text;
+			}
+		}
+		void button1_Click(object sender, RoutedEventArgs e)
+		{
 			this.Close();
 		}
 	}
