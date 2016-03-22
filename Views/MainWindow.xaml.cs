@@ -52,7 +52,7 @@ namespace Managerovec.Views
 			viewModel.saveTagsCommand.Execute(null);
 		}
 		void onLoadClickEventTransferer(object sender, RoutedEventArgs e){
-			viewModel.saveTagsCommand.Execute(null);
+			viewModel.loadTagsCommand.Execute(null);
 		}
 		void onSearchClickEventTransferer(object sender, RoutedEventArgs e)
 		{
@@ -62,13 +62,21 @@ namespace Managerovec.Views
 		}
 		void fileListViewDoubleClickEventTransferer(object sender, MouseButtonEventArgs e)
 		{
+			var items = ((sender as ListView).SelectedItems);
+			//HACK in getting selected items, because previous selection still stays in selectedItems
+			Managerovec.Models.FileContainer selectedItem = items[0] as Managerovec.Models.FileContainer;
+			if(items.Count>1){
+				selectedItem = items[items.Count-1] as Managerovec.Models.FileContainer;
+			}
+			//selectedItem = (sender as ListView).SelectedItem as Managerovec.Models.FileContainer;
+			//MessageBox.Show(String.Format("filename: {0}", selectedItem.filename));
+			if(selectedItem == null)
+				return;
 			try{
-				Managerovec.Models.FileContainer selectedItem = (sender as ListView).SelectedItem as Managerovec.Models.FileContainer;
 				viewModel.fileListViewDoubleClickCommand.Execute(selectedItem);
 			}catch(NullReferenceException exc){
 				MessageBox.Show(exc.Message);
 			}
-			
 		}
 		
 		

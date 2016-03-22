@@ -14,6 +14,7 @@ using System.IO;
 using System.Windows;
 using System.Linq;
 using Managerovec.Models;
+using System.Collections.ObjectModel;
 using Managerovec.Util;
 
 namespace Managerovec.ViewModels
@@ -74,7 +75,7 @@ namespace Managerovec.ViewModels
 				OnPropertyChanged("previousPath");}
 		}
 		
-		//Some commands here:
+		#region Some commands here:
 		public RelayCommand fileListViewDoubleClickCommand { get; set; }
 		public RelayCommand cliProcessorCommand { get; set; }
 		public RelayCommand fileListViewSelectionChangedCommand { get; set; }
@@ -83,27 +84,39 @@ namespace Managerovec.ViewModels
 		public RelayCommand searchTagCommand { get; set; }
 		public RelayCommand saveTagsCommand { get; set; }
 		public RelayCommand loadTagsCommand { get; set; }
+		#endregion
+		
 		//I will need a public List<> property to display files.
 		//should I use list<list<file>>? Nope, I think this is a bad idea, and I will figure out a better way
-		List<FileContainer> _files;
-		public List<FileContainer> files {
+		//Actually, this idea is not that bad. Becausem when u'r
+		ObservableCollection<FileContainer> _files;
+		public ObservableCollection<FileContainer> files {
 			get { return _files; }
 			set { _files = value; 
 				OnPropertyChanged("files");}
 		}
 		
-		List<CliCommandContainer> _cliCommandHistory;
-		public List<CliCommandContainer> cliCommandHistory {
+		ObservableCollection<CliCommandContainer> _cliCommandHistory;
+		public ObservableCollection<CliCommandContainer> cliCommandHistory {
 			get { return _cliCommandHistory; }
 			set { _cliCommandHistory = value; 
 				OnPropertyChanged("cliCommandHistory");}
 		}
 		
+		//And the most doubt part - should I do this? this will help serializing. Ok, nevermind.
+		
+		List<DirInf> _allModifiedFiles;
+		
+		public List<DirInf> allModifiedFiles {
+			get { return _allModifiedFiles; }
+			set { _allModifiedFiles = value; }
+		}
+		
 		//id of that selected file, which is needed later on, while saving the tags.
 		int selectedFile; 
-		List<string> _selectedTags;
+		ObservableCollection<string> _selectedTags;
 		
-		public List<string> selectedTags {
+		public ObservableCollection<string> selectedTags {
 			get { return _selectedTags; }
 			set { _selectedTags = value; 
 				OnPropertyChanged("selectedTags");}
@@ -114,14 +127,20 @@ namespace Managerovec.ViewModels
 		//I will need an instance of my old ConsoleClone to help me with dat task!
 		CommandLineClone ccv2 = new CommandLineClone(@"C:\");
 		
+		//and for some extra path manipulation I need this:
+		PathInfo path = new PathInfo(@"C:\");
+		//just plugged in the default path
+		                             
+		                             
 		public MainWindowViewModel()
 		{
+			allModifiedFiles = new List<DirInf>();
 			#region populating listView with data
 			//initialize the Path variable :)
 			currentPath = @"C:\";
 			//here are the calls for populating lists with data.
-			files = new List<FileContainer>();
-			cliCommandHistory = new List<CliCommandContainer>();
+			files = new ObservableCollection<FileContainer>();
+			cliCommandHistory = new ObservableCollection<CliCommandContainer>();
 			getFilesAndDirectories();
 			//so, this is done. Now it's time to bring in some commands.
 			#endregion
@@ -168,29 +187,45 @@ namespace Managerovec.ViewModels
 		/// And also, here I will need to check if I already have a saved file, so
 		/// </summary>
 		void getFilesAndDirectories(){
-			List<FileContainer> lst1 = new List<FileContainer>(), lst2 = new List<FileContainer>();
+			ObservableCollection<FileContainer> lst1 = new ObservableCollection<FileContainer>();
+			lst1.Add(new FileContainer("..", "up"));
 			
-			if (File.Exists(Directory.GetCurrentDirectory() + @"\tags.tags")){
-				lst1 = Serializator.Load();
-			}
 			var currentDir = new DirectoryInfo(currentPath);
 			DirectoryInfo[] internalDirs = currentDir.GetDirectories();
 			FileInfo[] internalFiles = currentDir.GetFiles();
 			
 			foreach (var directory in internalDirs) {
-				lst2.Add(new FileContainer(directory.Name, directory.FullName, "<dir>", directory.Attributes.ToString(), directory.CreationTime));
+				lst1.Add(new FileContainer(directory.Name, directory.FullName, "<dir>", directory.Attributes.ToString(), directory.CreationTime));
 			}
 			//now, we populated that with directories, but the files remain untouched...
 			foreach (var file in internalFiles) {
-				lst2.Add(new FileContainer(file.Name, file.FullName, "<" + file.Extension + ">", file.Attributes.ToString(), file.CreationTime));
+				lst1.Add(new FileContainer(file.Name, file.FullName, "<" + file.Extension + ">", file.Attributes.ToString(), file.CreationTime));
 			}
-			;
-			var newList = lst1.Concat(lst2).ToList().Distinct();
+			
 			_files.Clear();
-			_files.AddRange(newList);
+			_files = new ObservableCollection<FileContainer>(lst1);
 			OnPropertyChanged("files");
 			//populated? great. Now we need to take this, and bind it to the fileListView.
 		}
+		
+		void getTagsFromFile(){
+			var loadedFiles = new List<DirInf>();
+			try {
+				loadedFiles = Serializator.Load();
+			} catch (Exception e) {	
+				Console.WriteLine(e.Message);
+			}
+			
+			//if (File.Exists(Directory.GetCurrentDirectory() + @"\tags.tags")){
+			//	lst1 = Serializator.Load();
+			//}
+			//var newList = new List<FileContainer>();
+			//newList.Add(new FileContainer("..", "up"));
+			//newList.AddRange(lst1.Union(lst2).ToList());
+			//_files.Clear();
+		}
+		
+		//So, the last thing = is to fix changing directories and load tags into _files correctly.
 		
 		//well, I'll handle double-clicks a bit later. 
 		
@@ -198,7 +233,9 @@ namespace Managerovec.ViewModels
 		//So, let's pass to the selection event.
 		void FcliProcessorCommand(object obj){
 			cliCommandHistory.Add(new CliCommandContainer(obj as string, ccv2.tryCommand(obj as string)));
+			getFilesAndDirectories();
 			OnPropertyChanged("cliCommandHistory");
+			OnPropertyChanged("files");
 		}
 		
 		//in order to display that guy properly, I need a List<String> property somewhere above.
@@ -210,16 +247,16 @@ namespace Managerovec.ViewModels
 		/// Reacts to selection change	
 		/// </summary>
 		/// <param name="selectedItemName">In this case object type is FileContainer.</param>
-		void changeInternalSelection(object selectedItemName){
+		void changeInternalSelection(object selectedItem){
 			//Now I need to find an item with that name in my list. Which could be done by Linq
-			var ob1 = selectedItemName as FileContainer;
+			var ob1 = selectedItem as FileContainer;
 			selectedFile = files.IndexOf(ob1);
 			selectedFileName = ob1.fullName;
 			
 			if(ob1.tags == null){
-				ob1.tags = new List<string>();
+				ob1.tags = new ObservableCollection<string>();
 				ob1.tags.Add("There are no tags yet :)");
-			}
+			}	
 			selectedTags = ob1.tags;
 			//Guess I'll have to create a command for this.
 			//Done
@@ -234,11 +271,18 @@ namespace Managerovec.ViewModels
 		/// </summary>
 		/// <param name="tag">A char array, that represents a string, that represents a tagh.</param>
 		void addTagToFilecontainer(object tag){
-			if(files[selectedFile].tags[0].Equals("There are no tags yet :)")){
-				files[selectedFile].tags.RemoveAt(0);
+			try{
+				if(files[selectedFile].tags[0].Equals("There are no tags yet :)")){
+					files[selectedFile].tags.RemoveAt(0);
+				}
+				selectedTags = files[selectedFile].addTag(tag as string);
+				if(allModifiedFiles.Find(x=>x.path==currentPath) == null)
+					allModifiedFiles.Add(new DirInf(currentPath, files.ToList()));
+				OnPropertyChanged("selectedTags");
+			}catch(NullReferenceException exc){
+				Console.WriteLine(exc.Message + "\n\t While writing tag");
 			}
-			selectedTags = files[selectedFile].addTag(tag as string);
-			OnPropertyChanged("selectedTags");
+			
 		}
 		
 		//OK, nevermind all that changes. Let's just hop over to removing tags and saving them.
@@ -260,15 +304,19 @@ namespace Managerovec.ViewModels
 		void saveMyWorkPlease(object what=null){
 			//well, we have a list of all files. We can save it all.
 			//I do not care about that. For now.
-			Serializator.Save(files);
+			Serializator.Save(allModifiedFiles);
 		}
 		void loadMyWorkPlease(object what=null){
-			files = Serializator.Load();
+			allModifiedFiles = Serializator.Load();
+			var kek = allModifiedFiles.Find(x=>x.path==currentPath);
+			if(kek != null){
+				files = new ObservableCollection<FileContainer>(kek.filesAndDirectories);
+			}
 		}
 		//well, it saves progress, properly loads tags, that's cool. now I need searching!
 		
 		void search(object Tag){
-			List<FileContainer> found = new List<FileContainer>();
+			var found = new ObservableCollection<FileContainer>();
 			foreach (var file in files) {
 				if(file.tags != null){
 				foreach (var tag in file.tags) {
@@ -289,11 +337,41 @@ namespace Managerovec.ViewModels
 		//It's time to handle DoubleClicks!
 		void listViewDoubleClick(object obj)
 		{
-			previousPath = currentPath;
-			currentPath = (obj as FileContainer).fullName;
-			getFilesAndDirectories();
-			OnPropertyChanged("currentPath");
-			OnPropertyChanged("files");
+			foreach (var dirInf in allModifiedFiles) {
+				if(dirInf.path.Equals((obj as FileContainer).filename)){
+					currentPath = dirInf.path;
+					files = new ObservableCollection<FileContainer>(dirInf.filesAndDirectories);
+					OnPropertyChanged("currentPath");
+					OnPropertyChanged("files");
+					return;
+				}
+			}
+			
+			if((obj as FileContainer).filename.Equals("..")){
+				try {
+					currentPath = previousPath;
+					getFilesAndDirectories();
+					OnPropertyChanged("currentPath");
+				} catch (Exception E) {
+					MessageBox.Show(E.Message);
+				}
+			}else{
+				try{
+					previousPath = currentPath;
+					currentPath = (obj as FileContainer).fullName;
+					getFilesAndDirectories();
+					OnPropertyChanged("currentPath");
+					OnPropertyChanged("files");
+				}
+				catch(Exception E){
+					currentPath = previousPath;					
+					OnPropertyChanged("currentPath");
+					MessageBox.Show(E.Message);
+				}
+			}
+			//DebugInfo
+			path.path=currentPath;
+			path.getNumberOfLevels();
 		}
 	}
 }

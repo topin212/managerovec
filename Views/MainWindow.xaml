@@ -31,7 +31,11 @@
 					Header="Save tags"
 					x:Name="saveTags"
 					Click="onSaveClickEventTransferer"></MenuItem>
-			</MenuItem>
+				<MenuItem
+					Header="Load tags"
+					x:Name="loadTags"
+					Click="onLoadClickEventTransferer"></MenuItem>
+				</MenuItem>
 			<MenuItem
 				Header="Search">
 				<MenuItem
@@ -90,7 +94,8 @@
 			x:Name="filesListView"
 			ItemsSource="{Binding files, UpdateSourceTrigger=PropertyChanged}"
 			SelectionChanged="filesListViewSelectionChanged"
-			MouseDoubleClick="fileListViewDoubleClickEventTransferer">
+			MouseDoubleClick="fileListViewDoubleClickEventTransferer"
+			SelectionMode="Single">
 			<ListView.View>
 				<GridView>
 					<GridView.Columns>
@@ -167,13 +172,13 @@
 				Margin="0,1,0,0"
 				Stretch="UniformToFill" />
 			<ListBox
+				x:Name="tagListBox"
+				ItemsSource="{Binding selectedTags, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"
 				Grid.Column="0"
 				Grid.Row="1"
 				HorizontalAlignment="Stretch"
 				VerticalAlignment="Stretch"
-				Margin="5.99999999999999,7,10,0"
-				x:Name="tagListBox"
-				ItemsSource="{Binding selectedTags, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
+				Margin="6,7,5,0" />
 			<StackPanel
 				Orientation="Horizontal"
 				Height="23"
@@ -181,7 +186,8 @@
 				Grid.Row="2"
 				HorizontalAlignment="Stretch"
 				VerticalAlignment="Center"
-				Margin="1,0,5,0">
+				Margin="1,0,5,0"
+				Grid.ColumnSpan="2">
 				<Button
 					Height="23"
 					Content="Add this tag: "
@@ -219,6 +225,18 @@
 					Command="{Binding removeTagCommand }"
 					CommandParameter="{Binding ElementName=tagListBox, Path=SelectedItem, Mode=OneWay}" />
 			</StackPanel>
+			<Label
+				Grid.Column="1"
+				Grid.Row="1"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch"
+				Margin="3,3,98,136" />
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition
+					Width="0.491694352159468*" />
+				<ColumnDefinition
+					Width="0.508305647840532*" />
+			</Grid.ColumnDefinitions>
 		</Grid>
 		<Grid
 			HorizontalAlignment="Stretch"
@@ -248,7 +266,8 @@
 				VerticalAlignment="Stretch"
 				x:Name="cliOutputListView"
 				ItemsSource="{Binding cliCommandHistory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-				Margin="4,8,4,11">
+				Margin="4,8,4,11"
+				SelectionMode="Single">
 				<ListView.View>
 					<GridView>
 						<GridView.Columns>

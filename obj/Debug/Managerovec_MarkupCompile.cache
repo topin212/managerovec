@@ -1,7 +1,7 @@
 ﻿Managerovec
 
 
-winexe
+exe
 C#
 .cs
 E:\ItStepDz\CSharp\examWork\Managerovec\Managerovec\obj\Debug\
@@ -12,7 +12,7 @@ DEBUG;TRACE
 E:\ItStepDz\CSharp\examWork\Managerovec\Managerovec\App.xaml
 31664747627
 
-162011473072
+181344266339
 12-114506869
 Views\loginWindow.xaml;Views\MainWindow.xaml;Views\SearchModalDialog.xaml;
 

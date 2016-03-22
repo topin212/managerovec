@@ -5,11 +5,12 @@
     <ProjectTypeGuids>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <RootNamespace>Managerovec</RootNamespace>
     <AssemblyName>Managerovec</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <AppDesignerFolder>Properties</AppDesignerFolder>
+    <NoWin32Manifest>False</NoWin32Manifest>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -69,12 +70,14 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\CliCommandContainer.cs" />
+    <Compile Include="Models\DirInf.cs" />
     <Compile Include="Models\FileContainer.cs" />
     <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\WPFAssemblyInfo.cs" />
     <Compile Include="Util\CommandLineClone.cs" />
     <Compile Include="Util\IClosable.cs" />
+    <Compile Include="Util\PathInfo.cs" />
     <Compile Include="Util\RelayCommand.cs" />
     <Compile Include="Util\Serializator.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />

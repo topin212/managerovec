@@ -54,6 +54,7 @@ namespace Managerovec.ViewModels
 			try {
 				canlogIn = !login.Equals(null) && !password.Equals(null);
 			} catch (NullReferenceException exc) {
+				Console.WriteLine(exc.Message);
 				canlogIn = false;
 			}
 			return canlogIn;

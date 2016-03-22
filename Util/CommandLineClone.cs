@@ -98,8 +98,10 @@ namespace Managerovec.Util
                 	commands[command](argumentes);
                 } catch (KeyNotFoundException exc) {
                 	Console.WriteLine("Command \"" + command + "\" is not implemented.");
+                	Console.WriteLine(exc.Message);
                 } catch (DirectoryNotFoundException exc){
                 	Console.WriteLine("Directory " + argumentes[0] + " cannot be found.");
+                	Console.WriteLine(exc.Message);
                 } 
 
                 if(errorCounter > 10)
@@ -124,8 +126,10 @@ namespace Managerovec.Util
 	        	commands[command](argumentes);
 	        	return command + " successful.";
 	        } catch (KeyNotFoundException exc) {
+	        	Console.WriteLine(exc.Message);
 	        	return ("Command \"" + command + "\" is not implemented.");
 	        } catch (DirectoryNotFoundException exc){
+        		Console.WriteLine(exc.Message);
 	        	return ("Directory " + argumentes[0] + " cannot be found.");
 	        } 
 	        
