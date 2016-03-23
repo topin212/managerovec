@@ -27,7 +27,7 @@ namespace Managerovec.Util
 		
 		public static List<Managerovec.Models.DirInf> Load(){
 			XmlSerializer serializator = new XmlSerializer(typeof(List<Managerovec.Models.DirInf>));
-			TextReader reader = new StreamReader("tags.tags");
+                TextReader reader = new StreamReader("tags.tags"); 
 			return (serializator.Deserialize(reader)) as List<Managerovec.Models.DirInf>;
 		}
 		

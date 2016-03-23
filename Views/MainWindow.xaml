@@ -81,7 +81,7 @@
 			Margin="8.16871609953729,2.49999999999999,8.83128390046272,0"
 			Grid.Column="1"
 			x:Name="currentPathTextBox"
-			Text="{Binding currentPath, UpdateSourceTrigger=PropertyChanged}" />
+			Text="{Binding currentPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 		<ListView
 			HorizontalContentAlignment="Center"
 			Margin="5,2,8.83128390046272,8"
@@ -95,7 +95,8 @@
 			ItemsSource="{Binding files, UpdateSourceTrigger=PropertyChanged}"
 			SelectionChanged="filesListViewSelectionChanged"
 			MouseDoubleClick="fileListViewDoubleClickEventTransferer"
-			SelectionMode="Single">
+			SelectionMode="Single"
+            KeyDown="fileListViewEnterKeyDownEventTransferer">
 			<ListView.View>
 				<GridView>
 					<GridView.Columns>

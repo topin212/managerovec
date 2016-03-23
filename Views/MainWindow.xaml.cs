@@ -60,7 +60,7 @@ namespace Managerovec.Views
 			dialogWindow.ShowDialog();
 			viewModel.searchTagCommand.Execute(dialogWindow.tag);
 		}
-		void fileListViewDoubleClickEventTransferer(object sender, MouseButtonEventArgs e)
+		void fileListViewDoubleClickEventTransferer(object sender, MouseButtonEventArgs e=null)
 		{
 			var items = ((sender as ListView).SelectedItems);
 			//HACK in getting selected items, because previous selection still stays in selectedItems
@@ -78,8 +78,17 @@ namespace Managerovec.Views
 				MessageBox.Show(exc.Message);
 			}
 		}
-		
-		
-		#endregion
-	}
+		void fileListViewEnterKeyDownEventTransferer(object sender, KeyEventArgs e) {
+            if(e.Key.Equals(Key.Enter))
+                fileListViewDoubleClickEventTransferer(sender);
+        }
+        void currentPathTextBoxEnterKeyEventTransferer(object sender, KeyEventArgs e) {
+            string selectedItem = (sender as TextBox).Text;
+            if (e.Key.Equals(Key.Enter)) {
+                viewModel.changePath.Execute(selectedItem);
+            }
+        }
+
+        #endregion
+    }
 }

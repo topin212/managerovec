@@ -119,8 +119,17 @@ namespace Managerovec.Models
 		}
 		
 		public string joinedTags {
-			get { return tagsConcatted = String.Join(" ", tags); }
-		}
+			get { return tagsConcatted = lol(); }
+	    }
+
+        private string lol() {
+            string hehehe = "";
+            if (tags != null)
+                foreach (var tag in tags) {
+                    hehehe += tag;
+                }
+            return hehehe;
+        }
 		
 		//thanks SharpDevelop for this:
 		#region Equals and GetHashCode implementation
