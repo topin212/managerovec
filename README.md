@@ -1,5 +1,5 @@
 # managerovec
-A dummy file manager I'm doing for my exam. Try it out!
+A dummy file manager I'm doing for my exam. Don't ever try it out!
 
 Requirements:
   .Net 4.5.2. Earlier versions are not checked.
